@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+#/ connect - A tool for handling git repositories with multiple SSH hosts.
+#/
+#/ Usage:
+#/   connect [command] [arguments...]
+#/
+#/   <git-command> can be any git command. If the command involves a repository URL, 
+#/   connect will prompt to select an SSH host for the operation using `fzf`.
+#/
+#/ Examples:
+#/   A
+#/   B
+#/
+#/ OPTIONS:
+#/   -h, --help - Show this help message and exit
+#/   -v, --version - Show version information and exit
+#/
+# connect is under a MIT style licence.
+# See LICENSE for the full text.
+#
+# This is open source! Please feel free to contribute.
+# https://github.com/jnbdz/connect
+
+VERSION="1.0.0"
+
+usage() {
+    grep '^#/' "$0" | cut -c 4-
+}
+
+version() {
+    echo "connect version $VERSION"
+}
+
+ssh_connector() {
+
+}
+
+scp_connector() {
+
+}
+
+aws_connector() {
+
+}
+
+case "$1" in
+    ssh)
+        shift
+        ssh_connector
+        ;;
+    scp)
+        scp_connector
+        ;;
+    aws)
+	aws_connector
+        ;;
+    -v,--version)
+        version
+        exit 0
+        ;;
+    -h,--help)
+        usage
+	exit 0
+        ;;
+    *)
+        usage
+        exit 0
+        ;;
+esac
