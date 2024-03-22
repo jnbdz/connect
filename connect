@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-#/ connect - A tool for handling git repositories with multiple SSH hosts.
+#/ connect - .
 #/
 #/ Usage:
-#/   connect [command] [arguments...]
+#/   connect [connect-application] [arguments...]
 #/
-#/   <git-command> can be any git command. If the command involves a repository URL, 
+#/   <connect-application> can be any ... command. If the command involves a ... URL,
 #/   connect will prompt to select an SSH host for the operation using `fzf`.
 #/
 #/ Examples:
-#/   A
-#/   B
+#/   connect ssh root@127.0.0.1
+#/   connect scp root@127.0.01:/root/some_file user@127.0.1:/home/user/some_file
 #/
 #/ OPTIONS:
 #/   -h, --help - Show this help message and exit
@@ -32,25 +32,48 @@ version() {
     echo "connect version $VERSION"
 }
 
-ssh_connector() {
+ssh_host_selector() {
+    local host
+    # Extract Host entries from the SSH config and present them with fzf for selection
+    host=$(grep '^Host ' ~/.ssh/config | awk '{print $2}' | grep -v '*' | fzf --prompt="Select SSH host: ")
+    if [ -n "$host" ]; then
+        return "${host}"
+    else
+        echo "No host selected."
+    fi
+}
+
+ssh_connect() {
+    local host=ssh_host_selector
 
 }
 
-scp_connector() {
+scp_connect() {
+    local host source destination
+    # Example assuming the user specifies source and destination paths in the command
+    # This is a simplified example; you'll likely need to adjust it based on your specific needs
+    echo "Please enter the source file/path:"
+    read source
+    echo "Please enter the destination file/path:"
+    read destination
 
-}
+    host=$(fzf --prompt="Select SCP host: " < ~/.ssh/config)
 
-aws_connector() {
-
+    if [ -n "$host" ]; then
+        echo "Performing SCP to/from $host..."
+        scp "$source" "$host":"$destination"
+    else
+        echo "No host selected."
+    fi
 }
 
 case "$1" in
     ssh)
         shift
-        ssh_connector
+        ssh_connect
         ;;
     scp)
-        scp_connector
+        scp_connect
         ;;
     aws)
 	aws_connector
